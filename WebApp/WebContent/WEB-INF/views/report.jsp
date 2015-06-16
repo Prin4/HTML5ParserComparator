@@ -9,6 +9,8 @@
 </head>
 <body>
 
+
+
 	<h2>
 		<small>Report details</small>
 	</h2>
@@ -50,40 +52,43 @@
 		</table>
 	</c:if>
 
-	<c:if test="${not empty report.tests}">
+	<c:if test="${not empty report.testCases}">
 		<h2>
 			<small>Test list</small>
 		</h2>
-		<table class="table table-striped table-bordered">
+		<table id="testCases" class="table table-striped table-bordered">
 			<thead>
 				<tr>
 					<th>Name</th>
 					<th>All equal</th>
+					<th>Number of trees</th>
 				</tr>
 			</thead>
 			<tbody>
-				<c:forEach var="test" items="${report.tests}">
+				<c:forEach var="testCase" items="${report.testCases}">
 					<tr>
-						<td><c:out value="${test.name}" /></td>
-						<td><c:out value="${test.allEqual}" /> <c:if
-								test="${test.allEqual == false}">
-							&nbsp;|&nbsp;<a href="testdetails.html?testName=${test.name}">View
+						<td><c:out value="${testCase.name}" /></td>
+						<td><c:if test="${testCase.numberOfTrees == 1}">
+							Yes&nbsp;|&nbsp;<a
+									href="testdetails.html?testName=${testCase.name}">View tree</a>
+							</c:if> <c:if test="${testCase.numberOfTrees != 1}">
+							No&nbsp;|&nbsp;<a
+									href="testdetails.html?testName=${testCase.name}">View
 									differences</a>
 							</c:if></td>
-
+						<td>${testCase.numberOfTrees}</td>
 					</tr>
 				</c:forEach>
 			</tbody>
 		</table>
-		<div class="container text-center">
-			<ul class="pagination ">
-				<li><a href="#">1</a></li>
-				<li><a href="#">2</a></li>
-				<li><a href="#">3</a></li>
-				<li><a href="#">4</a></li>
-				<li><a href="#">5</a></li>
-			</ul>
-		</div>
 	</c:if>
 </body>
 </html>
+
+<content tag="local_script"> <script type="text/javascript">
+	$(document).ready(function() {
+		$('#testCases').DataTable({
+			stateSave: true
+		});
+	});
+</script> </content>

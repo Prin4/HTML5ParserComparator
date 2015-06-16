@@ -1,10 +1,6 @@
-#!/bin/bash
-# My first script
+rm -f report.xml
 
-#inputType="-s"
-#input="<a href='bla_bla_bla'>hi</p>"
-
-testData="html5libTests/data/adoption01"
+testData="./html5libTests/data/tests*"
 
 inputType="-f"
 #input="/home/mbgppja7/Documents/HTML5Parser/html5libTests/data/adoption01/1.txt"
@@ -14,22 +10,13 @@ equals=0
 different=0
 echo "Report" > results.txt
 for filename in $(find $testData -name '*.txt'); do
-	parse5output=`nodejs parse5/parser5.js "$inputType" "$filename"`
+	echo 'Processing '$filename
+	parse5output=`node parse5/parser5.js "$inputType" "$filename"`
 	jsoupOutput=`java -jar jsoup/JsoupParser.jar "$inputType" "$filename"`
-	if [ "$parse5output" == "$jsoupOutput" ]; then
-		#echo "equals"
-		equals=$(expr $equals + 1)
-	else 
-		#echo "diff"
-		different=$(expr $different + 1)
-		echo "$parse5output" >> results.txt
-		echo "$jsoupOutput" >> results.txt
-		echo "----------------------"  >> results.txt
-	fi
+	html5libOutput=`python html5lib/html5libAdapter.py "$inputType" "$filename"`
+	expected=`cat $(echo $filename | sed 's/data/expected/g')`
+
+	echo `java -jar comparator/Comparator.jar "$filename" "$expected" "expected" "$html5libOutput" "html5lib" "$parse5output" "parse5" "$jsoupOutput" "jsoup"`	
+
 done
 
-echo "equals: $equals differents $different"
-
-
-#node parse5/parser5.js "$inputType" "$input"
-#java -jar jsoup/JsoupParser.jar "$inputType" "$input"
